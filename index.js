@@ -1,100 +1,66 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const path = require('path');
 const app = express();
-const userRouter = express.Router();
-console.log(__dirname);
+const cookieParser = require('cookie-parser');
+const userRouter = require('./router/userRouter');
 
 app.use(bodyParser.json());
+app.use(cookieParser())
 
-var mysql      = require('mysql');
-var connection = mysql.createConnection({
-  host     : '127.0.0.1',
-  user     : 'root',
-  password : 'Imtheking2',
-  database : 'user2'
-});
-connection.connect();
-connection.on('error', function(err) {
-  if(!err) 
-    console.log('連線connection success');
-  else
-    console.log("連線connection fail : ", err);
-});
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-//get User list
-userRouter.get('/', function (req, res) {
-  const Read = 'SELECT * FROM user';
-  connection.query( Read, (error, list, fields) => {
-    if (error) throw error;
-    res.send(list);
-  });
+app.get('/api/login', function (req, res) {
+  res.render('login.ejs', { title: 'Express' });
+  // const { username, password } = req.query;
+  // const dbUser = {
+  //   username: 'admin',
+  //   password: '123456',
+  // };
+  // if (username === dbUser.username && password === dbUser.password) {
+  //   console.log('正確');
+  //   res.cookie("user", { username: username }, { maxAge: 900000, httpOnly: true });
+  //   res.redirect('index');
+  // } else {
+  //   console.log('帳密有錯');
+  // }
 });
-//get User By username
-userRouter.get('/:username', function (req, res) {
-  const ReadUser = `SELECT * FROM user WHERE username = '${req.params.username}'`;
-  connection.query( ReadUser, (error, info, fields) => {
-    if (error) throw error;
-    const data = {
-      username: info[0].username,
-      email: info[0].email,
-    };
-    res.send(data);
-  });
-});
-//insert User
-userRouter.post('/', function (req, res) {
-  const Create = `INSERT INTO user (username, email, password, userStatus) 
-  VALUES ('${req.body.username}', '${req.body.email}', '${req.body.password}', '${req.body.userStatus}')`;
-  const CheckExist = `SELECT * FROM user WHERE username = ${req.body.username}`;
-  if(CheckExist) return res.end('please change another name');
-  connection.query(Create),
-  function (error, info, fields) {
-    if (error) throw error;
-    res.send(info);
-  };
-});
-userRouter.put('/:username', function (req, res) {
-  const Update = `UPDATE user
-          SET username = '${req.body.username}', email = '${req.body.email}', password = '${req.body.password}', userStatus = '${req.body.userStatus}'
-          WHERE username = '${req.body.username}'`;
-
-  connection.query(Update), (error, info, fields) => {
-    if (error) throw error;
-    res.send(info);
-  };
-});
-userRouter.delete('/:username', function (req, res) {
-  const Delete = `DELETE FROM user WHERE username = '${req.params.username}'`;
-  connection.query( Delete, (error, info, fields) => {
-    if (error) throw error;
-    res.send('Delete success');
-  });
-});
-userRouter.get('/login', function (req, res) {
-  res.send('login');
-  const { username, password } = req.query;
+app.post('/api/login', function (req, res) {
+  const { username, password } = req.body;
+  console.log(username, password);
   const dbUser = {
     username: 'admin',
     password: '123456',
   };
-  if(username === dbUser.username && password === dbUser.password) {
-    console.log('正確');
-    res.cookie("user", { username: username });
-    res.redirect('index');
+  if (username === dbUser.username && password === dbUser.password) {
+    res.cookie("user", { username: username }, { maxAge: 900000, httpOnly: true });
+    res.send('登入成功');
   } else {
     console.log('帳密有錯');
   }
 });
+app.get('/signup', function(req, res) {
+  res.render('signup.ejs');
+});
+app.post('/signup', function(req, res) {
+
+});
 
 app.use('/static', express.static('public'));
 
-app.get('/', function (req, res) {
-  if(req.cookies.user !== null){
+app.get('/api', function (req, res) {
+  console.log(req.cookies);
+  console.log(req.cookies.user !== null);
+
+  if (req.cookies && req.cookies.user !== null) {
+    console.log('xxxxx', req.cookies.user);
     req.user = req.cookies.user;
+    res.send(`Hello World! ${req.user.username}`);
+  } else {
+    console.log('haha');
   }
-  console.log(`成功${req.user}`);
-  res.send(`Hello World!${req.user}`);
 });
 
 app.use('/api/user', userRouter);

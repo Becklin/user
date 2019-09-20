@@ -179,8 +179,8 @@
         }
       }
     },
-    "/user/login": {
-      "get": {
+    "/login": {
+      "post": {
         "tags": [
           "user"
         ],
@@ -192,18 +192,13 @@
         ],
         "parameters": [
           {
-            "name": "username",
-            "in": "query",
-            "description": "The user name for login",
+            "in": "body",
+            "name": "body",
+            "description": "Login",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "description": "The password for login in clear text",
-            "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
           }
         ],
         "responses": {
@@ -219,7 +214,7 @@
         }
       }
     },
-    "/user/logout": {
+    "/logout": {
       "get": {
         "tags": [
           "user"
@@ -241,6 +236,17 @@
     }
   },
   "definitions": {
+    "Login": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
     "User": {
       "type": "object",
       "properties": {
