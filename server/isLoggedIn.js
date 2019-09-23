@@ -4,7 +4,7 @@ function isLoggedIn (req, res, next) {
   const dbUser = {
     username: 'admin',
   };
-  if (req.cookies['user'].username === dbUser.username ) {
+  if (req.cookies['user'] && req.cookies['user'].username === dbUser.username ) {
     console.log('正確');
     return next();
   } else {

@@ -223,7 +223,6 @@
         "description": "",
         "operationId": "logoutUser",
         "produces": [
-          "application/xml",
           "application/json"
         ],
         "parameters": [],

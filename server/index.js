@@ -9,7 +9,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 const port = process.env.PORT || 3000;
-
+const DIST_DIR = path.join(__dirname, '../dist');
+const HTML_FILE = path.join(DIST_DIR, 'index.html');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -30,22 +31,30 @@ app.post('/api/login', function (req, res) {
   }
 });
 
-// app.get('/signup', function(req, res) {
-//   res.render('signup.ejs');
-// });
-// app.post('/signup', function(req, res) {
+app.get('/api/logout', function (req, res) {
+    cookie = req.cookies;
+    for (var prop in cookie) {
+        if (!cookie.hasOwnProperty(prop)) {
+            continue;
+        }    
+        res.cookie(prop, '', {expires: new Date(0)});
+    }
+    res.redirect('/');
+});
 
-// });
+//可設定多個靜態資產目錄
+app.use('/static', express.static('public')); //虛擬目錄static
+app.use(express.static(DIST_DIR)); 
 
-app.use('/static', express.static('public'));
-
-app.get('/api', function (req, res) {
-  if (req.cookies && req.cookies.user !== null) {
-    req.user = req.cookies.user;
-    res.send(`Hello World! ${req.user.username}`);
-  } else {
-    console.log('haha');
-  }
+app.get('/', function (req, res) {
+  res.send(HTML_FILE);
+  // if (req.cookies && req.cookies.user) {
+  //   console.log('req.cookies.user', req.cookies.user);
+  //   req.user = req.cookies.user;
+  //   res.send(`Hello World! ${req.user.username}`);
+  // } else {
+  //   res.send('please login');
+  // }
 });
 
 app.use('/api/user', userRouter);
