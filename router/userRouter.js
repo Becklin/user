@@ -18,21 +18,21 @@ connection.on('error', function (err) {
 //get User list
 userRouter.get('/',isLoggedIn , function (req, res) {
     const Read = 'SELECT * FROM user';
-    connection.query(Read, (error, list, fields) => {
+    connection.query(Read, (error, list) => {
         if (error) throw error;
-        res.send(list);
+        res.status(200).send(list);
     });
 });
 //get User By username
 userRouter.get('/:username',isLoggedIn , function (req, res) {
     const ReadUser = `SELECT * FROM user WHERE username = '${req.params.username}'`;
-    connection.query(ReadUser, (error, info, fields) => {
+    connection.query(ReadUser, (error, info) => {
         if (error) throw error;
         const data = {
             username: info[0].username,
             email: info[0].email,
         };
-        res.send(data);
+        res.status(200).send(data);
     });
 });
 //insert User
@@ -42,9 +42,9 @@ userRouter.post('/', function (req, res) {
     const CheckExist = `SELECT * FROM user WHERE username = ${req.body.username}`;
     if (CheckExist) return res.end('please change another name');
     connection.query(Create),
-        function (error, info, fields) {
+        function (error, info) {
             if (error) throw error;
-            res.send(info);
+            res.status(200).send(info);
         };
 });
 userRouter.put('/:username', function (req, res) {
@@ -52,16 +52,16 @@ userRouter.put('/:username', function (req, res) {
             SET username = '${req.body.username}', email = '${req.body.email}', password = '${req.body.password}', userStatus = '${req.body.userStatus}'
             WHERE username = '${req.body.username}'`;
 
-    connection.query(Update), (error, info, fields) => {
+    connection.query(Update), (error, info) => {
         if (error) throw error;
-        res.send(info);
+        res.status(200).send(info);
     };
 });
 userRouter.delete('/:username', function (req, res) {
     const Delete = `DELETE FROM user WHERE username = '${req.params.username}'`;
-    connection.query(Delete, (error, info, fields) => {
+    connection.query(Delete, (error, info) => {
         if (error) throw error;
-        res.send('Delete success');
+        res.status(200).send('Delete success');
     });
 });
 

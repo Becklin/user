@@ -9,7 +9,6 @@ function isLoggedIn (req, res, next) {
     return next();
   } else {
     console.log('帳密有錯');
-    // res.redirect('index');
   }
 }
 
