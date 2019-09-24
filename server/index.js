@@ -17,7 +17,7 @@ app.set('view engine', 'ejs');
 app.get('/api/login', function (req, res) {
   res.render('login.ejs', { title: 'Express' });
 });
-app.post('/api/login', function (req, res) {
+app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const dbUser = {
     username: 'admin',
@@ -27,34 +27,29 @@ app.post('/api/login', function (req, res) {
     res.cookie("user", { username: username }, { maxAge: 900000, httpOnly: true });
     res.status(200).send('登入成功');
   } else {
-    console.log('帳密有錯');
+    res.status(401).send('帳密有錯');
   }
 });
 
-app.get('/api/logout', function (req, res) {
-    cookie = req.cookies;
-    for (var prop in cookie) {
-        if (!cookie.hasOwnProperty(prop)) {
+app.get('/api/logout', (req, res) => {
+    for (var prop in req.cookies) {
+        if (!req.cookies.hasOwnProperty(prop)) {
             continue;
         }    
         res.cookie(prop, '', {expires: new Date(0)});
     }
-    res.redirect('/');
+    res.status(200).redirect('/');
 });
 
 //可設定多個靜態資產目錄
 app.use('/static', express.static('public')); //虛擬目錄static
 app.use(express.static(DIST_DIR)); 
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.send(HTML_FILE);
-  // if (req.cookies && req.cookies.user) {
-  //   console.log('req.cookies.user', req.cookies.user);
-  //   req.user = req.cookies.user;
-  //   res.send(`Hello World! ${req.user.username}`);
-  // } else {
-  //   res.send('please login');
-  // }
+  if (!req.cookies || !req.cookies.user) {
+    res.send('please login');
+  }
 });
 
 app.use('/api/user', userRouter);
