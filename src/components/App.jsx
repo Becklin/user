@@ -1,48 +1,32 @@
-import React , { Component } from 'react';
-
-class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { userList: '' };
-    }
-    callAPI() {
-        fetch("http://localhost:3000/api/user")
+import React , { useState, useEffect }  from 'react';
+const App = () => {
+    const [userList, setUserList] = useState();
+    function callAPI() {
+        fetch("http://localhost:3000/api/users")
             .then(res => res.json())
             .then(res => {
-                this.setState({
-                    userList: res
-                })
+                console.log(res);
+                setUserList(res);
             })
             .catch(err => {
                 console.log(err);
             });
     }
-    deleteUser(username) {
-        fetch(`http://localhost:3000/api/user/${username}`, {
+    function deleteUser(username) {
+        fetch(`http://localhost:3000/api/users/${username}`, {
             method: 'DELETE'
         }).then(response => {
-            this.callAPI();
+            callAPI();
         });
     }
-    componentDidMount() {
-        this.callAPI();
-    }
-    handleDelete(username) {
-        this.deleteUser(username);
-    }
-    renderUsers() {
-        return this.state.userList.map(
-            (user, index) => <li onClick={() => this.handleDelete(user.username)} key={index}><span>{user.username}</span> > <span>{user.email}</span></li>
-        )
-    }
-    render() {
-        return (
-            <>
-                <ul>
-                    {this.state.userList > 0 && this.renderUsers()}
-                </ul>
-            </>
-        )
-    }
+    useEffect(() => callAPI(), []);
+    return (
+        <ul>
+            { userList && userList.length > 0 ? userList.map(
+             (user, index) => <li onClick={() => deleteUser(user.id)} key={index}><span>{user.username}</span> > <span>{user.email}</span></li>
+         ) : 'NO USERS'}
+        </ul>
+    );
 }
+
 export default App;

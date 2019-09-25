@@ -24,7 +24,7 @@ app.post('/api/login', (req, res) => {
     password: '123456',
   };
   if (username === dbUser.username && password === dbUser.password) {
-    res.cookie("user", { username: username }, { maxAge: 900000, httpOnly: true });
+    res.cookie("user", { username: username }, { maxAge: 9000000, httpOnly: true });
     res.status(200).send('登入成功');
   } else {
     res.status(401).send('帳密有錯');
@@ -42,17 +42,17 @@ app.get('/api/logout', (req, res) => {
 });
 
 //可設定多個靜態資產目錄
-app.use('/static', express.static('public')); //虛擬目錄static
+app.use('/static', express.static('swagger')); //虛擬目錄static
 app.use(express.static(DIST_DIR)); 
 
 app.get('/', (req, res) => {
-  res.send(HTML_FILE);
   if (!req.cookies || !req.cookies.user) {
     res.send('please login');
   }
+  res.send(HTML_FILE);
 });
 
-app.use('/api/user', userRouter);
+app.use('/api/users', userRouter);
 app.listen(port, function () {
   console.log('Example app listening on port 3000!');
 }); 

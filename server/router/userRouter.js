@@ -24,12 +24,12 @@ userRouter.get('/', isLoggedIn, function (req, res) {
     });
 });
 //get User By username
-userRouter.get('/:username', isLoggedIn, (req, res) => {
-    const ReadUser = `SELECT * FROM user WHERE username = '${req.params.username}'`;
+userRouter.get('/:id', isLoggedIn, (req, res) => {
+    const ReadUser = `SELECT * FROM user WHERE id = '${req.params.id}'`;
     connection.query(ReadUser, (error, info) => {
-        if (error) throw error;
+        if(info.length == 0) res.status(404).send('user does not exist');
         const data = {
-            username: info[0].username,
+            id: info[0].id,
             email: info[0].email,
         };
         res.status(200).send(data);
@@ -39,27 +39,37 @@ userRouter.get('/:username', isLoggedIn, (req, res) => {
 userRouter.post('/', (req, res) => {
     const Create = `INSERT INTO user (username, email, password, userStatus)
     VALUES ('${req.body.username}', '${req.body.email}', '${req.body.password}', '${req.body.userStatus}')`;
-
     connection.query(Create, (error, info) => {
             console.log('err', error);
-            if (error) throw error;
-            res.status(200).send(info);
+            if (error) {
+                res.status(400).send({"message": error.sqlMessage});
+            }
+            res.status(201).send(info);
         });
 });
 
-userRouter.put('/:username', (req, res) => {
+userRouter.put('/:id', (req, res) => {
+    const Select = `SELECT * FROM user WHERE id = '${req.params.id}'`;
+    connection.query(Select, (error, info) => {
+        console.log('info', info);
+        if(info.length == 0) res.status(404).send('user does not exist');
+    });
     const Update = `UPDATE user
             SET username = '${req.body.username}', email = '${req.body.email}', password = '${req.body.password}', userStatus = '${req.body.userStatus}'
-            WHERE username = '${req.body.username}'`;
-
+            WHERE id = '${req.params.id}'`;
     connection.query(Update, (error, info) => {
         if (error) throw error;
-        res.status(200).send(info);
+        res.status(201).send(info);
     });
 });
 
-userRouter.delete('/:username', (req, res) => {
-    const Delete = `DELETE FROM user WHERE username = '${req.params.username}'`;
+userRouter.delete('/:id', (req, res) => {
+    const Select = `SELECT * FROM user WHERE id = '${req.params.id}'`;
+    connection.query(Select, (error, info) => {
+        console.log('info', info);
+        if(info.length == 0) res.status(404).send('user does not exist');
+    });
+    const Delete = `DELETE FROM user WHERE id = '${req.params.id}'`;
     connection.query(Delete, error => {
         if (error) throw error;
         res.status(200).send('Delete success');
