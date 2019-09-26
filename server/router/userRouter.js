@@ -2,12 +2,15 @@ const express = require('express');
 const userRouter = express.Router();
 const mysql = require('mysql');
 const isLoggedIn = require('../isLoggedIn');
+const validateReq = require('../validateReq');
+
 const connection = mysql.createConnection({
-    host: '127.0.0.1',
+    host: process.env.DATABASE_HOST,
     user: 'root',
     password: 'Imtheking2',
     database: 'user2'
 });
+
 connection.connect();
 connection.on('error', err => {
     if (!err)
@@ -36,9 +39,9 @@ userRouter.get('/:id', isLoggedIn, (req, res) => {
     });
 });
 //insert User
-userRouter.post('/', (req, res) => {
-    const Create = `INSERT INTO user (username, email, password, userStatus)
-    VALUES ('${req.body.username}', '${req.body.email}', '${req.body.password}', '${req.body.userStatus}')`;
+userRouter.post('/',validateReq, (req, res) => {
+    const Create = `INSERT INTO user (username, email, password, userStatus,  create_time)
+    VALUES ('${req.body.username}', '${req.body.email}', '${req.body.password}', '${req.body.userStatus}', NOW())`;
     connection.query(Create, (error, info) => {
             console.log('err', error);
             if (error) {

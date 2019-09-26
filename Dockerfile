@@ -1,12 +1,11 @@
 FROM node:10
+FROM mysql
 
 WORKDIR /Users/beck.lin/Documents/test
 
 COPY ./server/index.js ./
 
 COPY package*.json ./
-
-RUN npm install
 
 COPY . .
 

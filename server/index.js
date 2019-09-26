@@ -11,12 +11,7 @@ app.use(cookieParser());
 const port = process.env.PORT || 3000;
 const DIST_DIR = path.join(__dirname, '../dist');
 const HTML_FILE = path.join(DIST_DIR, 'index.html');
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-app.get('/api/login', function (req, res) {
-  res.render('login.ejs', { title: 'Express' });
-});
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const dbUser = {
@@ -42,7 +37,7 @@ app.get('/api/logout', (req, res) => {
 });
 
 //可設定多個靜態資產目錄
-app.use('/static', express.static('swagger')); //虛擬目錄static
+app.use('/api/v1/', express.static('swagger')); //虛擬目錄static
 app.use(express.static(DIST_DIR)); 
 
 app.get('/', (req, res) => {

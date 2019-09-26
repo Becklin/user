@@ -14,6 +14,10 @@
     {
       "name": "user",
       "description": "User restful operation"
+    },
+    {
+      "name": "login/logout",
+      "description": "User login logout"
     }
   ],
   "schemes": [
@@ -191,7 +195,7 @@
     "/login": {
       "post": {
         "tags": [
-          "user"
+          "login/logout"
         ],
         "summary": "Logs user into the system",
         "description": "",
@@ -226,7 +230,7 @@
     "/logout": {
       "get": {
         "tags": [
-          "user"
+          "login/logout"
         ],
         "summary": "Logs out current logged in user session",
         "description": "",
