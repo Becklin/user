@@ -1,5 +1,59 @@
+@import './reset';
+$font-stack:    Helvetica, sans-serif;
+$small-font: 12px;
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Helvetica, Roboto, Arial, sans-serif;
-    color: brown;
+    font: 100% $font-stack;
+    $primary-color: #333;
+    padding: 40px;
   }
+
+nav {
+  ul {
+    display: flex;
+  }
+  li {
+    flex: auto;
+    a {
+      display: inline-flex;
+      justify-content: center;
+      width: 160px;
+      line-height: 40px;
+      border: 1px solid #ccc;
+    }
+  }
+}
+
+.userlist {
+  margin: 16px auto;
+  &-item {
+    display: flex;
+    align-items: center;
+    flex-flow: row nowrap;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0 12px;
+    margin-bottom: 8px;
+    span {
+      & + span {
+        margin-left: 16px;
+      }
+    }
+    &:nth-child(odd) {
+      background: #f5f5f5;
+    }
+    &:hover {
+      background: #d9faff;
+    }
+  }
+  &-username {
+    line-height: 32px;
+  }
+  &-email {
+    font-size: $small-font;
+  }
+  &-delete {
+    margin-left: auto;
+    color: #ff5445;
+  }
+}

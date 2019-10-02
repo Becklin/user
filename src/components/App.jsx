@@ -1,31 +1,30 @@
-import React , { useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Login from './Login.jsx';
+import SignUp from './SignUp.jsx';
+import Home from './Home.jsx';
+
+
 const App = () => {
-    const [userList, setUserList] = useState();
-    function callAPI() {
-        fetch("http://localhost:3000/api/users")
-            .then(res => res.json())
-            .then(res => {
-                console.log(res);
-                setUserList(res);
-            })
-            .catch(err => {
-                console.log(err);
-            });
-    }
-    function deleteUser(username) {
-        fetch(`http://localhost:3000/api/users/${username}`, {
-            method: 'DELETE'
-        }).then(response => {
-            callAPI();
-        });
-    }
-    useEffect(() => callAPI(), []);
     return (
-        <ul>
-            { userList && userList.length > 0 ? userList.map(
-             (user, index) => <li onClick={() => deleteUser(user.id)} key={index}><span>{user.username}</span> > <span>{user.email}</span></li>
-         ) : 'NO USERS'}
-        </ul>
+        <Router>
+            <nav>
+                <ul>
+                    <li>
+                        <Link to="/">HOME</Link>
+                    </li>
+                    <li>
+                        <Link to="/login">LOGIN</Link>
+                    </li>
+                    <li>
+                        <Link to="/signup">SIGN UP</Link>
+                    </li>
+                </ul>
+            </nav>
+            <Route path="/" exact component={Home} />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={SignUp} />
+        </Router>
     );
 }
 
